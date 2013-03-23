@@ -1,0 +1,34 @@
+DOCUMENTATION FOR PROGRAMMING ASSIGNMENT 2 (CS4222)
+
+DONE BY: GOH ENG WEI
+MATRIC NO: U090290U
+
+Set up:
+Port used - 9000 for Node A and 9001 for Node B to test Serial forwarder on the PC
+
+Instructions:
+
+1. After unzipping the folder, you will see two folders, a log file and a single script called PA2make.sh . One folder is for each Node namely NodeA and NodeB whilst the script will be used to both compile and upload and also opening of the USB port.
+
+2. The text file log.txt is the mysql database log of the transmission between Node 2(Node A) and Node 4(Node) that was set up at Indriya. The temperatures are fairly consistent for the sensors.
+
+2. To compile and upload the firmware, run the script by typing: sh PA2make.sh <device port Node A e.g. /dev/ttyUSB0> <device port Node B e.g. /dev/ttyUSB2> <Node id for A e.g. 2> <Node id for B e.g. 2>
+Example: sh PA2make.sh /dev/ttyUSB0 /dev/ttyUSB1 2 4
+
+3. The set up on Indriya was tested and worked on node 2 as node A(with Telosb sensors) and node 4 as node B(with SBT80 sensors).
+ 
+4. The PC software has been setup to receive data from the telosb's USB port. After the script compiles and uploads the program it will automatically do the following:
+
+	- Run set up serial forwarder(provided by you) in a new terminal.
+	- Run the receiver.py program(provided by you) in a new terminal(one for each node) to listen for incoming packets from port 9000 for node A and port 9001 for node B
+
+Software and Sensor Specifications
+1. The component used in NodeA is named SerialC whilst the component used in NodeB is named SensorC.
+
+2. The sensors are converted from their raw values to human readable integer values after the computation and transmitted in integer form both over USB and in the air.
+
+3. The various conversions for the sensors were derived from the datasheets and manufacturer websites and the equations have been specified in the code either as code or comments. Millilumens were used for the telosb. I was unable to figure out the formula for the SBT80 Light sensor due to inadequate datasheets and erratic readings from the SBT80 sensors.
+
+
+
+
