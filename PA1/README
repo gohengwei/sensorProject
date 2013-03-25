@@ -1,0 +1,30 @@
+DOCUMENTATION FOR PROGRAMMING ASSIGNMENT 1 (CS4222)
+
+DONE BY: GOH ENG WEI
+MATRIC NO: U090290U
+
+Set up:
+Port used - 9001
+IP Address used - 127.0.0.1
+No. of leds - 3
+
+Instructions:
+
+1. After unzipping the folder, you will see a two scripts, one for compiling and the other for execution of the programs.
+
+2. To compile and upload the firmware, run the script by typing: sh make.sh <device port e.g. /dev/ttyUSB0>
+ 
+3. The PC software has been setup to both send and receive data from the telosb. The script, serial.sh will do the following:
+
+	- Run set up serial forwarder(provided by you) in a new terminal with port 9001 at a baud rate of 115200
+	- Run the receiver.py program(provided by you) in a new terminal to listen for incoming packets from port 9001
+	- Finally run the sender.py program(provided by you) in a new terminal to send the packet to the telosb
+
+4. The telosb firmware has been written to take in three parameters from the datastructure serial_msg, namely param_one,
+ param_two and param_three and each corresponding to BLUE LED, YELLOW LED and finally RED LED. Each of the param will be 
+for the sender program to specify the duration to turn each LED on for. The duration will be in milliseconds.
+
+5. To set up and send the commands, run the script by typing:
+	sh serial.sh <device port> <BLUE LED duration> <YELLOW LED duration> <RED LED duration>
+
+6. And the three leds should light up and turn off once the specified duration is over.
