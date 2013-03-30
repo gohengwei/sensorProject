@@ -21648,7 +21648,7 @@ static inline void ActuatorC__Boot__booted(void )
 #line 33
 {
   ActuatorC__report_sent();
-  ActuatorC__MilliTimer__startPeriodic(5000);
+  ActuatorC__MilliTimer__startPeriodic(1000);
 
 
 

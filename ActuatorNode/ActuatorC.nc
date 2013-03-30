@@ -32,7 +32,7 @@ module ActuatorC {
 /* --------  EVENT: Boot up sequence for sensors and air interface--------------- */
   event void Boot.booted() {
     report_sent();
-    call MilliTimer.startPeriodic(5000);
+    call MilliTimer.startPeriodic(1000);
 /*
     while(1)
     {
