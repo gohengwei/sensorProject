@@ -21,5 +21,6 @@ implementation {
 	components ActiveMessageC;
 	components new AMReceiverC(AM_MOTE_MSG);
   	App.Receive -> AMReceiverC;
+  	App.Packet -> AMReceiverC;
   	App.AMControl -> ActiveMessageC;
 }

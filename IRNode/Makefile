@@ -1,4 +1,4 @@
-COMPONENT=SerialAppC
+COMPONENT=IRNodeAppC
 CFLAGS += -I$(TOSDIR)/lib/printf
 BUILD_EXTRA_DEPS += serial_msg.java
 

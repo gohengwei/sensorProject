@@ -1,3 +1,5 @@
+#include "printf.h"
+
 #ifndef SERIAL_MSG
 #define SERIAL_MSG
 
@@ -17,6 +19,7 @@ typedef nx_struct serial_msg {
 enum {
   AM_SERIAL_MSG = 101,
   AM_MOTE_MSG = 102,
+  ACTUATOR_NODE = 4,
 };
 
 #endif

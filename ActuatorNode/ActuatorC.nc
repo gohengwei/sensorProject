@@ -19,28 +19,55 @@ module ActuatorC {
   implementation {
   	message_t packet;
   	serial_msg_t* actuatorData;
+    bool isBright = FALSE;
+    int len;
 
   //LED Indicators 
   void report_problem() { call Leds.led0Toggle(); }
   void report_sent() { call Leds.led1Toggle(); }
   void report_received() { call Leds.led2Toggle(); }
 
+  void handleGPIO(uint8_t setting)
+  {
+    switch(setting)
+    {
+      //Reset system and go back to sleep
+      case 0:
+        call GPIO.clr();
+        printf("disable");
+        printfflush();
+
+        isBright = FALSE;
+        break;
+      case 1:
+        printf("enable");
+        printfflush();
+
+        if(!isBright)
+        {
+          call GPIO.set();
+          call Leds.led0On();
+        }
+        break;
+      case 2:
+        printf("bright");
+        printfflush();
+
+        isBright = TRUE;
+        call GPIO.clr();
+        call Leds.led0Off();
+        break;
+      default:
+        break;
+    } 
+  }
   /**************************************************************************
                             EVENT CALLBACKS
   ***************************************************************************/
 
 /* --------  EVENT: Boot up sequence for sensors and air interface--------------- */
   event void Boot.booted() {
-    report_sent();
-    call MilliTimer.startPeriodic(1000);
-/*
-    while(1)
-    {
-      printf("Hi!!\n");
-      printfflush();
-    }
-    */
-    call AMControl.start();
+       call AMControl.start();
        /* Wake up the sensor board */
    
     call GPIO.makeOutput();
@@ -55,7 +82,6 @@ module ActuatorC {
 /* -------- EVENT: Air interface start up sequence--------------- */
   event void AMControl.startDone(error_t err) {
     if (err == SUCCESS) {
-      report_received();
       call GPIO.clr();
     }
     else {
@@ -72,22 +98,20 @@ module ActuatorC {
 
   event message_t* Receive.receive(message_t* msg, void* payload, uint8_t _len)
   {
-  	/*
+  	
     if (_len == sizeof(serial_msg_t)) {
-    serial_msg_t* ptrpkt = (serial_msg_t*)(call SerialPacket.getPayload(&packet, len));
+    serial_msg_t* ptrpkt = (serial_msg_t*)(call Packet.getPayload(&packet, len));
     serial_msg_t* rcvpkt = (serial_msg_t*)payload;
     ptrpkt->param_one = rcvpkt->param_one;
-    ptrpkt->param_two = rcvpkt->param_two;
-    ptrpkt->param_three = rcvpkt->param_three;
-    len = _len;
-    post getData();
+    //len = _len;
+    handleGPIO(rcvpkt->param_one);
     }
-  	*/
+  	
     return msg;
   }
   /* -------- EVENT: Timer fire event--------------- */
   event void MilliTimer.fired() {
-    call GPIO.toggle();
+    
   }
 
 }
