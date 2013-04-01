@@ -1,0 +1,7 @@
+SENSORBOARD = mts300
+PFLAGS += -DMTS300CA
+COMPONENT=SounderTestAppC
+
+
+include $(MAKERULES)
+

@@ -1,0 +1,61 @@
+
+module SounderTestC {
+    uses {
+        interface Boot;
+        
+        interface Leds;
+        interface Mts300Sounder;
+        interface Timer<TMilli> as Timer;
+
+		interface SplitControl as RadioControl;
+		interface Receive as RadioReceive;
+    }
+}
+
+implementation {
+
+    event void Boot.booted(){
+    
+		call RadioControl.start();
+    
+    }
+
+	event void RadioControl.startDone(error_t error){
+        if (error == SUCCESS) {
+            //nothing
+        }
+        else {
+            call RadioControl.start();
+        }
+    }
+
+    
+    event void Timer.fired(){
+    
+        call Mts300Sounder.beep(1000);
+        call Leds.led0Toggle();
+    
+    }
+    
+
+	event message_t* RadioReceive.receive(message_t *buf, void *payload, uint8_t len){
+        radio_msg_t *msg = (radio_msg_t*) payload; 
+		call Leds.led1Toggle();
+        if(msg->param_one == 1){
+
+			call Timer.startPeriodic(2000);
+			
+
+		} else if(msg->param_one == 0){
+	
+			call Timer.stop();
+		}
+        return buf;
+    }
+
+	event void RadioControl.stopDone(error_t error){
+        //do nothing
+    }
+	
+
+}

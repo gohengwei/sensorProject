@@ -1,0 +1,19 @@
+#include "msg.h"
+
+configuration SounderAppC{}
+implementation {
+
+    components MainC, SounderC as App;
+    components SounderC;   
+    components new TimerMilliC() as Timer;
+    
+    //components new AMReceiverC(AM_SERIAL_MSG) as RadioReceiver;
+    //components ActiveMessageC;
+    
+    //App.RadioControl -> ActiveMessageC.SplitControl;
+    //App.RadioReceive -> RadioReceiver.Receive;
+    
+    App.Mts300Sounder -> SounderC;
+    App.Timer -> Timer;
+
+}
