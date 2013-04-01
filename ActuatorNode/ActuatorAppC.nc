@@ -19,7 +19,7 @@ implementation {
 
 	//Receiver Mote communication
 	components ActiveMessageC;
-	components new AMReceiverC(AM_MOTE_MSG);
+	components new AMReceiverC(AM_RADIO_MSG);
   	App.Receive -> AMReceiverC;
   	App.Packet -> AMReceiverC;
   	App.AMControl -> ActiveMessageC;
