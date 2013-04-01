@@ -16,7 +16,14 @@ typedef nx_struct serial_msg {
 
 enum {
   AM_SERIAL_MSG = 101,
-  AM_RADIO_MSG = 102
+  AM_RADIO_MSG = 102,
+  BASESTATION = 1,
+  LIGHT = 2,
+  FAN = 3,
+  WIEYE1 = 4,
+  WIEYE2 = 5,
+  LIGHT_SENSOR = 6,
+  BUZZER = 7,
 };
 
 #endif
