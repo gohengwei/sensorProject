@@ -1,0 +1,3 @@
+COMPONENT=WiEyeNodeAppC
+
+include $(MAKERULES)
