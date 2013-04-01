@@ -28,8 +28,8 @@ implementation {
 
   //Receiver Mote communication
   components ActiveMessageC;
-  components new AMSenderC(AM_MOTE_MSG);
-  components new AMReceiverC(AM_MOTE_MSG);
+  components new AMSenderC(AM_RADIO_MSG);
+  components new AMReceiverC(AM_RADIO_MSG);
   App.AMSend -> AMSenderC;
   App.Receive -> AMReceiverC;
   App.AMControl -> ActiveMessageC;

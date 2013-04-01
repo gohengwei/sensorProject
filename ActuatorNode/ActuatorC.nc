@@ -18,7 +18,7 @@ module ActuatorC {
 }
   implementation {
   	message_t packet;
-  	serial_msg_t* actuatorData;
+  	radio_msg_t* actuatorData;
     bool isBright = FALSE;
     int len;
 
@@ -78,10 +78,11 @@ module ActuatorC {
     //call GPIO.selectIOFunc();
   }
 
-
 /* -------- EVENT: Air interface start up sequence--------------- */
   event void AMControl.startDone(error_t err) {
     if (err == SUCCESS) {
+      printf("Hi! Actuator Node here!\n");
+      printfflush();
       call GPIO.clr();
     }
     else {
@@ -98,10 +99,10 @@ module ActuatorC {
 
   event message_t* Receive.receive(message_t* msg, void* payload, uint8_t _len)
   {
-  	
-    if (_len == sizeof(serial_msg_t)) {
-    serial_msg_t* ptrpkt = (serial_msg_t*)(call Packet.getPayload(&packet, len));
-    serial_msg_t* rcvpkt = (serial_msg_t*)payload;
+    	
+    if (_len == sizeof(radio_msg_t)) {
+    radio_msg_t* ptrpkt = (radio_msg_t*)(call Packet.getPayload(&packet, len));
+    radio_msg_t* rcvpkt = (radio_msg_t*)payload;
     ptrpkt->param_one = rcvpkt->param_one;
     //len = _len;
     handleGPIO(rcvpkt->param_one);

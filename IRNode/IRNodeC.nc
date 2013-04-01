@@ -6,9 +6,9 @@
 
 //Number of LEDs to control
 #define DATA_NUM 40
-#define THRESHOLD 7000
+#define THRESHOLD 4000
 ////////////////////////////////////////////////////////////////////////////////////////
-// Packet specification for serial_msg
+// Packet specification for radio_msg
 // param_one --> Duration for LED 0
 // param_two --> Duration for LED 1
 // param_three --> Duration for LED 2
@@ -44,7 +44,7 @@ implementation {
 
   //message to be sent to the PC
   message_t packet,serialPacket;
-  serial_msg_t sensorData;
+  radio_msg_t sensorData;
   uint8_t len,data_ctr;
   uint16_t sum[DATA_NUM];
   bool isDone[3] = {FALSE,FALSE,FALSE};
@@ -61,10 +61,11 @@ implementation {
 
   void handleState(uint8_t setting)
   {
+    report_received();
     if(setting == 0x01)
     {
       isSense = TRUE;
-      call MilliTimer.startPeriodic(50);
+      call MilliTimer.startPeriodic(5);
     } else if (setting == 0x00) 
     {
       call MilliTimer.stop();
@@ -114,7 +115,7 @@ implementation {
     }
     else {
       //Reply with Acknowledgement
-      if (call SerialSend.send(ACTUATOR_NODE, &serialPacket, sizeof(serial_msg_t)) == SUCCESS) {
+      if (call SerialSend.send(AM_SERIAL_MSG, &serialPacket, sizeof(radio_msg_t)) == SUCCESS) {
         locked = TRUE;
       }
     }
@@ -122,7 +123,6 @@ implementation {
 
   void sendAirMessage()
   {
-      report_sent();
       if (locked) {
       report_problem();
       return;
@@ -130,7 +130,8 @@ implementation {
     else {
       //Reply with Acknowledgement
 
-      if (call AMSend.send(ACTUATOR_NODE, &packet, sizeof(serial_msg_t)) == SUCCESS) {
+      if (call AMSend.send(LIGHT, &packet, sizeof(radio_msg_t)) == SUCCESS) {
+        report_sent();
         locked = TRUE;
       }
     }
@@ -142,7 +143,6 @@ implementation {
   ***************************************************************************/
 
   event void Boot.booted() {
-    report_received();
     call AMControl.start();
     call SerialAMControl.start();
   }
@@ -151,13 +151,11 @@ implementation {
 /* -------- EVENT: Air interface start up sequence--------------- */
   event void AMControl.startDone(error_t err) {
     if (err == SUCCESS) {
-        printf("hi!\n");
+        printf("Hi! Light Sensor Node here!\n");
         printfflush();
-        call MilliTimer.startPeriodic(5);
-        report_sent();
+        //call MilliTimer.startPeriodic(5);
     }
     else {
-      report_sent();
       call AMControl.start();
     }
   }
@@ -206,9 +204,9 @@ implementation {
 /* -------- EVENT: Receive Message over Air interfaces-------------- */
   event message_t* Receive.receive(message_t* msg, void* payload, uint8_t _len)
 	{
-    if (_len == sizeof(serial_msg_t)) {
-      //serial_msg_t* ptrpkt = (serial_msg_t*)(call Packet.getPayload(&packet, len));
-      serial_msg_t* rcvpkt = (serial_msg_t*)payload;
+    if (_len == sizeof(radio_msg_t)) {
+      //radio_msg_t* ptrpkt = (radio_msg_t*)(call Packet.getPayload(&packet, len));
+      radio_msg_t* rcvpkt = (radio_msg_t*)payload;
       handleState(rcvpkt->param_one);
     }
     
@@ -240,7 +238,7 @@ implementation {
 
           if(val > THRESHOLD)
           {
-            serial_msg_t* ptrpkt = (serial_msg_t*)(call Packet.getPayload(&packet, len));
+            radio_msg_t* ptrpkt = (radio_msg_t*)(call Packet.getPayload(&packet, len));
             ptrpkt->param_one = 2;
             printf("sent: %i\n",val);
             printfflush();
