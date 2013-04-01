@@ -6,10 +6,13 @@ module BasestationC {
         interface Packet as RadioPacket;
         interface SplitControl as RadioControl;
         interface Receive as RadioReceive;
+		interface AMPacket as RadioAMAccess;
         
         interface Receive as SerialReceive;
         interface Packet as SerialPacket;
         interface SplitControl as SerialControl;
+
+		interface Leds;
 
     }
 }
@@ -19,6 +22,7 @@ implementation {
     bool radio_locked = FALSE;
     bool serial_locked = FALSE;
     message_t packet;
+	message_t packet2;
     
     event void Boot.booted(){
         call RadioControl.start();
@@ -66,6 +70,22 @@ implementation {
     
     }
     
+	void sendMessage2();
+    
+    void sendMessage2(){
+        radio_msg_t* msg_send = (radio_msg_t *)call RadioPacket.getPayload(&packet2, sizeof(radio_msg_t));
+        msg_send->param_one = 0;
+        
+        
+        if(!radio_locked){    
+            if( call RadioSend.send(AM_BROADCAST_ADDR, &packet2, sizeof(radio_msg_t)) == SUCCESS ){
+                radio_locked = TRUE;
+            }
+        }
+    
+    
+    }
+	
     event message_t* SerialReceive.receive(message_t *buf, void *payload, uint8_t len){
         radio_msg_t *msg = (radio_msg_t*) payload; 
         sendMessage(msg);
@@ -76,11 +96,21 @@ implementation {
         radio_locked = FALSE;
     }
     
+	
+	bool bed = FALSE;
+	bool door = FALSE;
 
     event message_t* RadioReceive.receive(message_t *buf, void *payload, uint8_t len){
+		call Leds.led1Toggle();
+		
+        if( (call RadioAMAccess.source(buf) == 4) || (call RadioAMAccess.source(buf) == 5) ){
+			call Leds.led0Toggle();
+			
+			sendMessage2();
 
-        //not implemented
-        return NULL;
+		}
+		
+        return buf;
     }
 
 

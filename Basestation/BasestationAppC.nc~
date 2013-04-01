@@ -11,14 +11,17 @@ implementation {
     
     components SerialActiveMessageC as Serial;
 
+	components LedsC;
+
     App.Boot -> MainC.Boot;
     
     App.RadioSend -> RadioSender.AMSend;
     App.RadioPacket -> RadioSender.Packet;
     App.RadioControl -> ActiveMessageC.SplitControl;
     App.RadioReceive -> RadioReceiver.Receive;
+	App.RadioAMAccess -> RadioReceiver.AMPacket;
     
-    App.SerialReceive -> Serial.Receive[AM_RADIO_MSG]; 
+    App.SerialReceive -> Serial.Receive[AM_SERIAL_MSG]; 
     App.SerialPacket -> Serial.Packet;
     App.SerialControl -> Serial.SplitControl;
 
