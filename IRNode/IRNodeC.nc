@@ -6,7 +6,7 @@
 
 //Number of LEDs to control
 #define DATA_NUM 40
-#define THRESHOLD 4000
+#define THRESHOLD 3000
 ////////////////////////////////////////////////////////////////////////////////////////
 // Packet specification for radio_msg
 // param_one --> Duration for LED 0
@@ -49,6 +49,7 @@ implementation {
   uint16_t sum[DATA_NUM];
   bool isDone[3] = {FALSE,FALSE,FALSE};
   bool locked, isSense = FALSE;
+  bool isBright = FALSE;
 
  /**************************************************************************
                             TASKS AND PRIVATE METHODS
@@ -186,19 +187,15 @@ implementation {
  event void AMSend.sendDone(message_t* msg, error_t error) {
     if (&packet == msg) {
       report_sent();
+
+      if(isBright)  call MilliTimer.stop();
       locked = FALSE;
-      sendSerialMessage();
-      report_received();
     }
   }
 
   event void SerialSend.sendDone(message_t* bufPtr, error_t error)
 	{
     report_received();
-		locked = FALSE;
-    isDone[0] = FALSE;
-    isDone[1] = FALSE;
-    isDone[2] = FALSE;
   }
 
 /* -------- EVENT: Receive Message over Air interfaces-------------- */
@@ -235,18 +232,25 @@ implementation {
           printf("v: %i\n",val);
           printfflush();
           //Disable Light Node due to bright condition
-
           if(val > THRESHOLD)
           {
             radio_msg_t* ptrpkt = (radio_msg_t*)(call Packet.getPayload(&packet, len));
             ptrpkt->param_one = 2;
-            printf("sent: %i\n",val);
+            isBright = TRUE;
+            printf("sent on: %i\n",val);
             printfflush();
   
             sendAirMessage();
+          } else 
+          {
+            radio_msg_t* ptrpkt = (radio_msg_t*)(call Packet.getPayload(&packet, len));
+            ptrpkt->param_one = 3;
+            printf("sent off: %i\n",val);
+            printfflush();
+            sendAirMessage();
           }
           data_ctr = 0;
-       }
+       } else
       {
         //Formula 
         sum[data_ctr] = data*230700/8192;// centi lumens used for better accuracy
