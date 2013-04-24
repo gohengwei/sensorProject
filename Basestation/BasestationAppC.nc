@@ -1,4 +1,6 @@
+#define NEW_PRINTF_SEMANTICS
 #include "serial_msg.h"
+#include "printf.h"
 
 configuration BasestationAppC{}
 implementation {
@@ -13,7 +15,11 @@ implementation {
 
 	components LedsC;
 
-    App.Boot -> MainC.Boot;
+    components PrintfC;
+    components new TimerMilliC() as Timer1;
+    components new TimerMilliC() as Timer2;
+
+    App.Boot -> MainC;
     
     App.RadioSend -> RadioSender.AMSend;
     App.RadioPacket -> RadioSender.Packet;
@@ -26,6 +32,8 @@ implementation {
     App.SerialControl -> Serial.SplitControl;
 	
 	App.Leds -> LedsC;
+    App.Timer1 -> Timer1;
+    App.Timer2 -> Timer2;
 }
 
 

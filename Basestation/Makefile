@@ -1,4 +1,5 @@
 COMPONENT=BasestationAppC
+CFLAGS += -I$(TOSDIR)/lib/printf
 #BUILD_EXTRA_DEPS += serial_msg.py
 
 #serial_msg.py: msg.h

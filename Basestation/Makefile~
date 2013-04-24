@@ -1,8 +1,9 @@
 COMPONENT=BasestationAppC
-BUILD_EXTRA_DEPS += serial_msg.py
+#CFLAGS += -I$(TOSDIR)/lib/printf
+#BUILD_EXTRA_DEPS += serial_msg.py
 
-serial_msg.py: msg.h
-	mig python -python-classname=$(@:.py=) msg.h $(@:.py=) -o $@
+#serial_msg.py: msg.h
+	#mig python -python-classname=$(@:.py=) msg.h $(@:.py=) -o $@
 
 include $(MAKERULES)
 
